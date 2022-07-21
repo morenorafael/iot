@@ -3,6 +3,8 @@
 namespace Morenorafael\Iot;
 
 use Morenorafael\Iot\Contracts\Commands;
+use Morenorafael\Iot\Home\Led;
+use Morenorafael\Iot\Home\Socket;
 
 class Home
 {
@@ -19,31 +21,21 @@ class Home
         return $this;
     }
 
-    public function on(string $code = 'switch_1')
+    public function socket(?string $deviceId = null): Socket
     {
-        return $this->control->sendCommands([
-            'code' => $code,
-            'value' => true,
-        ]);
-    }
-
-    public function off(string $code = 'switch_1', ?int $ttl = null)
-    {
-        if (!is_null($ttl)) {
-            return $this->countdown($ttl);
+        if (!is_null($deviceId)) {
+            $this->device($deviceId);
         }
 
-        return $this->control->sendCommands([
-            'code' => $code,
-            'value' => false,
-        ]);
+        return new Socket($this->control);
     }
 
-    public function countdown(int $ttl, string $code = 'countdown_1')
+    public function led(?string $deviceId = null): Led
     {
-        return $this->control->sendCommands([
-            'code' => $code,
-            'value' => $ttl,
-        ]);
+        if (!is_null($deviceId)) {
+            $this->device($deviceId);
+        }
+
+        return new Led($this->control);
     }
 }
